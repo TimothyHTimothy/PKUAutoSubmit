@@ -10,7 +10,7 @@ from urllib.parse import quote
 import time
 import copy
 import sys
-import os
+import random, string, os
 
 TIMEOUT = 10
 TIMESLP = .5
@@ -139,6 +139,25 @@ def click_inPeking(driver):
     time.sleep(TIMESLP)
 
 
+def screen_capture(driver):
+    driver.back()
+    driver.back()
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.CLASS_NAME, 'el-card__body')))
+    driver.find_elements_by_class_name('el-card__body')[1].click()
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '//button/span[contains(text(),"加载更多")]')))
+    driver.maximize_window()
+    time.sleep(0.1)
+    fname = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)) + '.png'
+    # img_path = os.path.join('.', fname)
+    img_path = fname
+    driver.save_screenshot(img_path)
+    print('备案历史截图已保存')
+    return img_path
+
+
 def submit(driver):
     driver.find_element_by_xpath(
         '//button/span[contains(text(),"保存")]').click()
@@ -222,6 +241,8 @@ def run(driver, username, password, campus, reason, destination, track,
 
     print('=================================')
     print('可以愉快的玩耍啦！')
+    img_path = screen_capture(driver)
+    return img_path
 
 
 if __name__ == '__main__':
@@ -235,6 +256,7 @@ if __name__ == '__main__':
     parser.add_argument('--habitation', type=str, help='入校前居住地, eg. 北京', default='北京')
     parser.add_argument('--district', type=str, help='入校前居住所在区, eg. 海淀区', default='海淀区')
     parser.add_argument('--street', type=str, help='入校前居住所在街道, eg. 燕园街道', default='燕园街道')
+    parser.add_argument('--token', type=str, help='Tg bot token')
     args = parser.parse_args()
 
     args_public = copy.deepcopy(args)
@@ -254,8 +276,29 @@ if __name__ == '__main__':
 
     driver = PhantomJS(executable_path=phantomjs_path)
 
-    run(driver, args.username, args.password, args.campus, args.reason,
+    img_path = run(driver, args.username, args.password, args.campus, args.reason,
         args.destination, args.track, args.habitation, args.district,
         args.street)
+
+    try:
+        import telegram
+        bot = telegram.Bot(args.token)
+
+        from dateutil import tz
+        import datetime
+        import time
+
+        sh = tz.gettz('Asia/Shanghai')
+        date = datetime.datetime.fromtimestamp(int(time.time()), sh).strftime('%Y-%m-%d')
+        chat_id = 429983438
+        bot.send_message(chat_id=chat_id, text='Result of %s on %s'%(args.username, date))
+        ff = open(img_path, 'rb')
+        bot.send_photo(chat_id=chat_id, photo=ff)
+        ff.close()
+        os.remove(img_path)
+
+    except:
+        print('Tg bot 发送失败')
+        raise NotImplementedError
 
     driver.close()

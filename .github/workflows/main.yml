@@ -31,6 +31,8 @@ jobs:
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
       
       - run: |
-          pip install selenium
-          python main.py -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
-          python main.py -u ${{ secrets.USERNAME2 }} -p ${{ secrets.PASSWORD2 }}
+          pip install selenium python-telegram-bot python-dateutil
+      - run: |
+          python main.py -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }} --token ${{ secrets.tg_bot_token}}
+      - run: |
+          python main.py -u ${{ secrets.USERNAME2 }} -p ${{ secrets.PASSWORD2 }} --token ${{ secrets.tg_bot_token}}
