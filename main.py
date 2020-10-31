@@ -12,8 +12,8 @@ import copy
 import sys
 import random, string, os
 
-TIMEOUT = 20
-TIMESLP = 3
+TIMEOUT = 24
+TIMESLP = 3.5
 
 
 def login(driver, username, password, failed=0):
