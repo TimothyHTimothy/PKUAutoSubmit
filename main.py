@@ -250,7 +250,7 @@ if __name__ == '__main__':
     parser.add_argument('--username', '-u', type=str, help='用户名')
     parser.add_argument('--password', '-p', type=str, help='密码')
     parser.add_argument('--campus', type=str, help='所在校区, 燕园、万柳、畅春园、圆明园、中关新园', default='燕园')
-    parser.add_argument('--reason', type=str, help='出校原因, eg. 吃饭', default='吃饭')
+    parser.add_argument('--reason', type=str, help='出校原因, eg. 吃饭', default='实习')
     parser.add_argument('--destination', type=str, help='出校目的地, eg. 北京', default='北京')
     parser.add_argument('--track', type=str, help='出校轨迹, eg. 畅春园食堂', default='畅春园')
     parser.add_argument('--habitation', type=str, help='入校前居住地, eg. 北京', default='北京')
@@ -263,7 +263,10 @@ if __name__ == '__main__':
     args_public.password = 'xxxxxxxx'
     print('Arguments: {}'.format(args_public))
     print('Driver Launching...')
-
+    if int(args.username[-1]) % 2 == 0:
+        args.track = '前往融科资讯中心，返回学校'
+    else:
+        args.track = '前往中国技术交易大厦，返回学校'
     # driver = Firefox()
     # driver = Chrome()
 
