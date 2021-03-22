@@ -256,7 +256,7 @@ if __name__ == '__main__':
     parser.add_argument('--habitation', type=str, help='入校前居住地, eg. 北京', default='北京')
     parser.add_argument('--district', type=str, help='入校前居住所在区, eg. 海淀区', default='海淀区')
     parser.add_argument('--street', type=str, help='入校前居住所在街道, eg. 燕园街道', default='燕园街道')
-    parser.add_argument('--token', type=str, help='Tg bot token')
+    #parser.add_argument('--token', type=str, help='Tg bot token')
     args = parser.parse_args()
 
     args_public = copy.deepcopy(args)
@@ -280,7 +280,7 @@ if __name__ == '__main__':
         args.destination, args.track, args.habitation, args.district,
         args.street)
 
-    try:
+    '''try:
         import telegram
         bot = telegram.Bot(args.token)
 
@@ -300,5 +300,6 @@ if __name__ == '__main__':
     except:
         print('Tg bot 发送失败')
         raise NotImplementedError
+    '''
 
     driver.close()
